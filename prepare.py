@@ -1,3 +1,8 @@
+'''
+Script to prepare required directories or clean up output directories if the
+model is tweaked before running it again.
+'''
+
 import pathlib
 import os
 import sys

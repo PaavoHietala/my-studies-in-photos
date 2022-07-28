@@ -1,3 +1,7 @@
+'''
+Crop all faces from images in img\\training-full and save them in img\\training-crop.
+'''
+
 import os
 import copy
 import cv2
@@ -5,6 +9,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def read_gray(fpath, debug = False):
+    '''
+    Read the image file in given path and return it in grayscale
+
+    Parameters
+    ----------
+    fpath : str
+        Full path to the image file
+    debug : bool, optional
+        Draw loaded image before continuing, by default False
+
+    Returns
+    -------
+    np.array
+        Loaded grayscale image array
+    '''
+
     print("Reading file", fpath)
 
     img = cv2.imdecode(np.fromfile(fpath, np.uint8), cv2.IMREAD_UNCHANGED)
@@ -19,8 +39,26 @@ def read_gray(fpath, debug = False):
             plt.show()
         return gray
 
-def crop_faces(img, cascade, fname, suffix, debug = False):
-    pd = 25 # padding for the detected square
+def crop_faces(img, cascade, fname, suffix = None, debug = False):
+    '''
+    Detect all faces from the image and save each as a cropped image file.
+
+    Parameters
+    ----------
+    img : np.array
+        Image array for detection
+    cascade : cv2.CascadeClassifier
+        Preloaded classifier object used for face detection
+    fname : str
+        Name of the image file without path
+    suffix : str
+        Suffix to append to filename, e.g. cascade type, by default None
+    debug : int, optional
+        Debug level 1 (Draw image with detection squares) or 2 (Draw individual
+        faces and image with detection squares), by default False
+    '''
+
+    pd = 25 # padding for the detecttion square
     det_img = copy.deepcopy(img)
     faces = cascade.detectMultiScale(img, 1.1, 2)
     
@@ -40,7 +78,8 @@ def crop_faces(img, cascade, fname, suffix, debug = False):
             cv2.imshow("Face " + str(i), face)
             cv2.waitKey()
 
-        face_path = os.path.join('img', 'training-cropped', '-'.join([fname, suffix, str(i)]) + '.jpg')
+        face_name = '-'.join(filter(None, [fname, suffix, str(i)])) + '.jpg'
+        face_path = os.path.join('img', 'training-cropped', face_name)
         print("Writing face to path", face_path)
 
         try:
@@ -48,14 +87,29 @@ def crop_faces(img, cascade, fname, suffix, debug = False):
             face.tofile(face_path)
         except cv2.error as e:
             print("Failed to save face due to error:", e)
-        
-    cv2.imwrite(os.path.join('img', 'training-detected', '-'.join([fname, suffix, 'detected.jpg'])), det_img)
+
+    detected_name = '-'.join(filter(None, [fname, suffix, 'detected.jpg']))
+    cv2.imwrite(os.path.join('img', 'training-detected', detected_name), det_img)
     
     if debug:
         cv2.imshow('Detected faces', img)
         cv2.waitKey()
 
 def list_files(dir):
+    '''
+    List all filepaths in given directory and its subdirectories.
+
+    Parameters
+    ----------
+    dir : str
+        Base directory for the search
+
+    Returns
+    -------
+    [str]
+        List of full file paths in dir
+    '''
+
     return [os.path.join(path, name) for path, subdirs, files in os.walk(dir) for name in files]
 
 if __name__ == "__main__":
