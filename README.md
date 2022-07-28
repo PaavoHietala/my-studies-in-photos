@@ -20,6 +20,7 @@ This can be achieved with `facecrop.py`:
 1. Place a number (100+) images of yourself in `img\training-full`
 2. Run `python facecrop.py`
 3. Check the results in `img\training-crop` for cropped faces and `img\training-detected` for original images marked with detected faces
+4. If you need to tweak the detection it can be done in `facecrop.py` (currently the parameters are hardcoded). Most useful tweaks are to change the cascade type on the last line and the number of neighbors in `cascade.detectMultiScale(img, 1.1, 2)`. Before trying again you can clean up the output directories with `python prepare.py -c`
 
 ## TODO
 
