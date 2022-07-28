@@ -4,9 +4,12 @@ Crop all faces from images in img\\training-full and save them in img\\training-
 
 import os
 import copy
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+
+from common import list_files
 
 def read_gray(fpath, debug = False):
     '''
@@ -94,23 +97,6 @@ def crop_faces(img, cascade, fname, suffix = None, debug = False):
     if debug:
         cv2.imshow('Detected faces', img)
         cv2.waitKey()
-
-def list_files(dir):
-    '''
-    List all filepaths in given directory and its subdirectories.
-
-    Parameters
-    ----------
-    dir : str
-        Base directory for the search
-
-    Returns
-    -------
-    [str]
-        List of full file paths in dir
-    '''
-
-    return [os.path.join(path, name) for path, subdirs, files in os.walk(dir) for name in files]
 
 if __name__ == "__main__":
     training_dir = os.path.join('img', 'training-full')
